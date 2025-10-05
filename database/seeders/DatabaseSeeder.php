@@ -2,22 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash; // مهم
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1) أنشئ/حدّث المستخدم التجريبي بدون تكرار
+        User::updateOrCreate(
+            ['email' => 'test@example.com'], // شرط عدم التكرار
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'), // حط باسوورد، حتى لو مش هتستعمله
+                'email_verified_at' => now(),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // 2) شغّل بقية السييدر
+        $this->call([
+            TemplateSeeder::class,
         ]);
     }
 }
