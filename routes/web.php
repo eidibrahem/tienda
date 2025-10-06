@@ -10,13 +10,14 @@ use App\Http\Controllers\PaymentController;
 Route::get('/', [GalleryController::class, 'index'])->name('home');
 Route::get('/request/{template}', [OrderController::class, 'create'])->name('orders.create');
 Route::post('/request/{template}', [OrderController::class, 'store'])->name('orders.store');
+Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 
 Route::get('/orders/{order}/pay', [PaymentController::class, 'checkout'])->name('orders.pay');
 Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
 Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 
 
-Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+Route::get('/dashboard', [OrderController::class, 'dashboard'])->name('dashboard');
 Route::middleware('auth')->get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

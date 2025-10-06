@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Template extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        'video_url',
+        'thumbnail_url',
+        'is_active',
+    ];
 }

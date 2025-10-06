@@ -38,15 +38,41 @@ class OrderController extends Controller {
             'description' => $data['description'] ?? null,
             'photos'      => $paths,
             'price'       => $template->price, // snapshot
-            'status'      => 'created'
+            'status'      => 'pending'
         ]);
 
         return redirect()->route('orders.pay', $order);
     }
 
-    // لوحة بسيطة
+    // لوحة بسيطةs
     public function index() {
         $orders = Order::latest()->paginate(20);
         return view('admin.orders', compact('orders'));
+    }
+
+    // Dashboard with all orders
+    public function dashboard() {
+        $orders = Order::with('template')->latest()->paginate(20);
+        
+        // Calculate statistics
+        $totalOrders = Order::count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $completedToday = Order::where('status', 'completed')
+            ->whereDate('updated_at', today())
+            ->count();
+        $totalRevenue = Order::sum('price');
+        
+        return view('dashboard', compact('orders', 'totalOrders', 'pendingOrders', 'completedToday', 'totalRevenue'));
+    }
+
+    // Update order status
+    public function updateStatus(Request $request, Order $order) {
+        $request->validate([
+            'status' => 'required|in:pending,processing,completed,delivered'
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Order status updated successfully!');
     }
 }

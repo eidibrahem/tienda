@@ -1,0 +1,205 @@
+{
+    "project": {
+      "name": "Tienda - Custom Video Creation",
+      "description": "A clean, modern, responsive web design for a custom video creation service. Includes a gallery (home) page and a request (checkout) page.",
+      "pages": [
+        {
+          "name": "Gallery (Home)",
+          "sections": [
+            {
+              "type": "hero",
+              "logo": "assets/logo.png",
+              "title": "Transform Your Memories Into Beautiful Videos",
+              "subtitle": "Choose from our collection of professionally crafted video templates. Upload your photos and let us create a stunning personalized video just for you."
+            },
+            {
+              "type": "templates_grid",
+              "title": "Choose Your Style",
+              "layout": {
+                "columns": { "mobile": 1, "tablet": 2, "desktop": 3 },
+                "gap": 24
+              },
+              "card_style": {
+                "background": "#FFFFFF",
+                "radius": "1.25rem",
+                "shadow": "0 4px 6px rgba(0,0,0,0.06)",
+                "hover_shadow": "0 10px 15px rgba(0,0,0,0.08)",
+                "padding": "1rem",
+                "transition": "all 0.3s ease"
+              },
+              "media_style": {
+                "height": "16rem",
+                "border_radius": "0.75rem",
+                "fit": "cover"
+              },
+              "button": {
+                "text": "Request Similar",
+                "background": "#F59E0B",
+                "hover_background": "#D97706",
+                "text_color": "#FFFFFF",
+                "radius": "0.5rem",
+                "padding": "0.5rem 1rem"
+              }
+            },
+            {
+              "type": "how_it_works",
+              "title": "How It Works",
+              "steps": [
+                { "number": 1, "title": "Choose Your Style", "description": "Browse our sample videos and select your favorite style." },
+                { "number": 2, "title": "Upload & Customize", "description": "Upload your photos and provide details for your video." },
+                { "number": 3, "title": "Receive Your Video", "description": "Get your custom video within 24–48 hours." }
+              ],
+              "style": {
+                "background": "#FFFFFF",
+                "radius": "1.25rem",
+                "shadow": "0 4px 6px rgba(0,0,0,0.05)",
+                "padding": "2rem",
+                "grid_columns": 3,
+                "gap": "1.5rem"
+              }
+            },
+            {
+              "type": "footer",
+              "background": "#0F3D3E",
+              "text_color": "#FFFFFF",
+              "title": "Tienda",
+              "description": "Creating beautiful, personalized videos that capture your special moments.",
+              "padding": "3rem 1rem"
+            }
+          ]
+        },
+        {
+          "name": "Request (Checkout)",
+          "sections": [
+            {
+              "type": "topbar",
+              "back_link": "/",
+              "title": "Request Custom Video"
+            },
+            {
+              "type": "two_column_layout",
+              "left": {
+                "type": "template_preview",
+                "media_height": "500px",
+                "show_video": true,
+                "fields": ["name", "description", "price", "delivery_time"]
+              },
+              "right": {
+                "type": "form_card",
+                "title": "Upload Your Photos & Details",
+                "sections": [
+                  {
+                    "name": "Upload",
+                    "fields": [
+                      { "type": "file_upload", "label": "Upload Photos", "accept": [".jpg", ".png", ".gif"], "max_size": "10MB" }
+                    ]
+                  },
+                  {
+                    "name": "Details",
+                    "fields": [
+                      { "type": "text", "label": "Your Name", "id": "name" },
+                      { "type": "email", "label": "Email Address", "id": "email" },
+                      { "type": "textarea", "label": "Video Description", "id": "description" },
+                      { "type": "select", "label": "Country", "options": ["United Arab Emirates", "Egypt", "Saudi Arabia", "Kuwait"] }
+                    ]
+                  },
+                  {
+                    "name": "Payment",
+                    "fields": [
+                      { "type": "text", "label": "Card Number", "id": "card_number" },
+                      { "type": "text", "label": "Expiry Date", "id": "expiry" },
+                      { "type": "text", "label": "CVC", "id": "cvc" }
+                    ],
+                    "button": {
+                      "text": "Pay {price} AED – Complete Order",
+                      "background": "#F59E0B",
+                      "hover_background": "#D97706",
+                      "color": "#FFFFFF",
+                      "radius": "0.5rem"
+                    },
+                    "footer_note": "Powered by Stripe"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "footer",
+              "background": "#0F3D3E",
+              "text_color": "#FFFFFF",
+              "title": "Tienda",
+              "description": "Creating beautiful, personalized videos that capture your special moments.",
+              "padding": "3rem 1rem"
+            }
+          ]
+        }
+      ]
+    },
+    "design_tokens": {
+      "colors": {
+        "bg_gradient": ["#F7EEDC", "#F4E7D2", "#F0E2C7"],
+        "primary": "#F59E0B",
+        "primary_hover": "#D97706",
+        "text": "#1F2937",
+        "muted": "#6B7280",
+        "surface": "#FFFFFF",
+        "footer": "#0F3D3E",
+        "border": "#E5E7EB"
+      },
+      "radii": {
+        "card": "1.25rem",
+        "media": "0.75rem",
+        "button": "0.5rem"
+      },
+      "shadow": {
+        "base": "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)",
+        "hover": "0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.06)"
+      },
+      "spacing": {
+        "pageX": { "mobile": "1rem", "tablet": "1.5rem", "desktop": "2rem" },
+        "sectionY": { "mobile": "2rem", "desktop": "3rem" },
+        "cardPadding": "1rem"
+      },
+      "typography": {
+        "fontFamily": "Figtree, ui-sans-serif, system-ui",
+        "sizes": { "h1": "2rem", "h2": "1.375rem", "body": "1rem", "small": "0.875rem" },
+        "weights": { "regular": 400, "medium": 500, "semibold": 600, "bold": 700 }
+      },
+      "breakpoints": {
+        "sm": "640px",
+        "md": "768px",
+        "lg": "1024px"
+      }
+    },
+    "data": {
+      "templates": [
+        {
+          "id": 1,
+          "name": "Sample 1",
+          "description": "Custom video with personalized message",
+          "price": 5.00,
+          "video_url": "assets/sample1.mp4",
+          "thumbnail_url": "assets/sample1.jpg",
+          "is_active": true
+        },
+        {
+          "id": 2,
+          "name": "Sample 2",
+          "description": "Custom video with photos and music",
+          "price": 10.00,
+          "video_url": "assets/sample2.mp4",
+          "thumbnail_url": "assets/sample2.jpg",
+          "is_active": true
+        },
+        {
+          "id": 3,
+          "name": "Sample 3",
+          "description": "Professional custom video production",
+          "price": 15.00,
+          "video_url": "assets/sample3.mp4",
+          "thumbnail_url": "assets/sample3.jpg",
+          "is_active": true
+        }
+      ]
+    }
+  }
+  
