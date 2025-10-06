@@ -1,6 +1,97 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    // Check if admin is authenticated
+    function checkAdminAuth() {
+        const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
+        if (!isAuthenticated) {
+            showPasswordModal();
+        } else {
+            showDashboard();
+        }
+    }
+    
+    function showPasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        modal.classList.remove('hidden');
+    }
+    
+    function hidePasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        modal.classList.add('hidden');
+    }
+    
+    function authenticateAdmin() {
+        const password = document.getElementById('adminPassword').value;
+        if (password === 'admin123') {
+            sessionStorage.setItem('adminAuthenticated', 'true');
+            hidePasswordModal();
+            showDashboard();
+        } else {
+            alert('Incorrect password. Please try again.');
+            document.getElementById('adminPassword').value = '';
+        }
+    }
+    
+    function showDashboard() {
+        const dashboardContent = document.getElementById('dashboardContent');
+        dashboardContent.classList.remove('hidden');
+    }
+    
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', checkAdminAuth);
+</script>
+
+<!-- Password Protection Modal -->
+<div id="passwordModal" class="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black bg-opacity-95 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl transform transition-all duration-300 scale-100" style="width: 350px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);">
+        <!-- Header with Logo -->
+        <div class="text-center mb-8">
+            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-orange-400 rounded-full via-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <img src="{{ asset('assets/logo.webp') }}" alt="Tienda Logo" class="h-25 w-25 rounded-full object-cover">
+                   
+            </div>
+            <h2 class="text-2xl font-black text-gray-800 mb-3 tracking-tight">Admin Portal</h2>
+            <p class="text-gray-500 text-sm font-medium">Enter your credentials to access the dashboard</p>
+        </div>
+        
+        <!-- Password Form -->
+        <form onsubmit="event.preventDefault(); authenticateAdmin();" class="space-y-6">
+            <div class="relative">
+                <label for="adminPassword" class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Password</label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        id="adminPassword" 
+                        class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-300 bg-gray-50 focus:bg-white font-medium placeholder-gray-400"
+                        placeholder="Enter admin password"
+                        required
+                        style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"
+                    >
+                </div>
+            </div>
+            
+            <button 
+                type="submit"
+                class="w-full text-white py-3 px-4 rounded-xl font-bold text-base shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl focus:ring-4 focus:ring-gray-200"
+                style="background-color: #1a4241; box-shadow: 0 10px 15px -3px rgba(26, 66, 65, 0.4), 0 4px 6px -2px rgba(26, 66, 65, 0.05);"
+            >
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Access Dashboard
+                </span>
+            </button>
+        </form>
+        
+        <!-- Footer -->
+       
+    </div>
+</div>
+
+<div id="dashboardContent" class="hidden">
 <style>
     :root {
         --background: #fdfcf9;
@@ -450,5 +541,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
