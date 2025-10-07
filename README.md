@@ -59,4 +59,154 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# tienda
+
+---
+
+# 🛍️ Tienda - Custom Video Store
+
+A Laravel-based custom video ordering platform.
+
+## 🚀 Deployment Instructions (Server Setup)
+
+### 1️⃣ Upload Files to Server
+Upload all project files to your server (e.g., `/public_html/tienda/`)
+
+### 2️⃣ Install Dependencies
+```bash
+composer install --optimize-autoloader --no-dev
+npm install && npm run build
+```
+
+### 3️⃣ Environment Setup
+```bash
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+### 4️⃣ Configure Database
+Edit `.env` file with your database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
+
+### 5️⃣ **Run Migrations & Seed Database** ⚡
+This will create all tables AND automatically insert 3 video templates:
+```bash
+php artisan migrate --force
+php artisan db:seed --force
+```
+
+The seeder will automatically create:
+- ✅ `templates` table with 3 video templates
+- ✅ Sample 1 - 5 AED (sample1.mp4)
+- ✅ Sample 2 - 10 AED (sample2.mp4)
+- ✅ Sample 3 - 15 AED (sample3.mp4)
+
+### 6️⃣ Set Permissions
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+### 7️⃣ Upload Video Files
+Make sure these video files are uploaded to `public/videos/`:
+- `sample1.mp4`
+- `sample2.mp4`
+- `sample3.mp4`
+
+### 8️⃣ Configure Web Server
+Point your web server document root to `/public` directory.
+
+**For Apache (.htaccess):**
+```apache
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+```
+
+**For Nginx:**
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```
+
+### 9️⃣ Optimize for Production
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### 🔟 Test Your Site
+Visit your domain and you should see 3 video templates on the home page!
+
+---
+
+## 📋 Admin Access
+
+**Dashboard URL:** `/dashboard`  
+**Password:** `admin123`
+
+---
+
+## 🔄 Update Database After Deployment
+
+If you need to re-seed the database (won't duplicate existing records):
+```bash
+php artisan db:seed --class=TemplateSeeder --force
+```
+
+---
+
+## 🛠️ Troubleshooting
+
+### Templates not showing?
+```bash
+# Re-run seeder
+php artisan db:seed --force
+
+# Clear cache
+php artisan cache:clear
+php artisan view:clear
+```
+
+### Videos not playing?
+- Check that video files exist in `public/videos/`
+- Verify file permissions: `chmod 644 public/videos/*.mp4`
+
+### Database errors?
+- Verify `.env` database credentials
+- Run: `php artisan migrate:fresh --seed --force`
+
+---
+
+## 📱 Features
+
+- 🎬 Video template browsing
+- 📝 Custom video order requests
+- 🖼️ Image upload (up to 5 images)
+- 💳 Order management
+- 📊 Admin dashboard with statistics
+- 🔐 Password-protected admin area
+
+---
+
+## 🎯 Default Order Status
+
+New orders are created with status: **`pending`**
+
+Available statuses:
+- `pending` - New order
+- `processing` - Being worked on
+- `completed` - Finished
+- `delivered` - Sent to customer
