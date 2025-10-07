@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Force HTTPS only in production, not in local development
+        if (env('APP_ENV') === 'production' && env('FORCE_HTTPS', true)) {
+            URL::forceScheme('https');
+        }
     }
 }
