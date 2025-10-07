@@ -16,7 +16,9 @@ class ForceHttps
     public function handle(Request $request, Closure $next): Response
     {
         // Force HTTPS only in production, not in local development
+        // Note: TrustProxies middleware handles X-Forwarded-Proto detection
         if (env('APP_ENV') === 'production' && env('FORCE_HTTPS', true)) {
+            // Don't redirect if already secure or if it's a health check
             if (!$request->secure() && !$request->is('health') && !$request->is('up')) {
                 return redirect()->secure($request->getRequestUri());
             }
