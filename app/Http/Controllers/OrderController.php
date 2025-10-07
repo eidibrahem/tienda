@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Template;
 use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
+use App\Services\CloudinaryService;
 
 class OrderController extends Controller {
     public function create(Template $template) {
@@ -25,8 +26,15 @@ class OrderController extends Controller {
 
         $paths = [];
         if ($r->hasFile('photos')) {
-            foreach ($r->file('photos') as $file) {
-                $paths[] = $file->store('uploads/orders', 'public'); // storage/app/public/...
+            // Use Cloudinary if configured, otherwise use local storage
+            if (CloudinaryService::isConfigured()) {
+                $cloudinary = new CloudinaryService();
+                $paths = $cloudinary->uploadMultiple($r->file('photos'));
+            } else {
+                // Fallback to local storage for development
+                foreach ($r->file('photos') as $file) {
+                    $paths[] = $file->store('uploads/orders', 'public');
+                }
             }
         }
 
