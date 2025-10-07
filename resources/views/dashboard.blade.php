@@ -5,10 +5,13 @@
     // Check if admin is authenticated
     function checkAdminAuth() {
         const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
-        if (!isAuthenticated ) {
-            showPasswordModal();
-        } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        const statusUpdated = urlParams.get('status_updated');
+        
+        if (statusUpdated === 'true' || isAuthenticated === 'true') {
             showDashboard();
+        } else {
+            showPasswordModal();
         }
     }
     
@@ -23,8 +26,10 @@
     }
     
     function authenticateAdmin() {
-        const password = document.getElementById('adminPassword').value;
-        if (password === 'admin123') {
+        const password = document.getElementById('adminPassword').value.trim();
+        const correctPassword = 'admin123';
+        
+        if (password === correctPassword) {
             sessionStorage.setItem('adminAuthenticated', 'true');
             hidePasswordModal();
             showDashboard();
@@ -46,23 +51,22 @@
 <!-- Password Protection Modal -->
 <div id="passwordModal" class="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black bg-opacity-95 flex items-center justify-center z-50 backdrop-blur-sm">
     <div class="bg-white rounded-3xl shadow-2xl transform transition-all duration-300 scale-100" style="width: 350px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);">
-        <!-- Header with Logo -->
         <div class="text-center mb-8">
-            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-orange-400 rounded-full via-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
-            <img src="{{ asset('assets/logo.webp') }}" alt="Tienda Logo" class="h-25 w-25 rounded-full object-cover">
-                   
+            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
             </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-3 tracking-tight">Admin Portal</h2>
-            <p class="text-gray-500 text-sm font-medium">Enter your credentials to access the dashboard</p>
+            <h2 class="text-2xl font-black text-gray-800 mb-3 tracking-tight">Admin Dashboard</h2>
+            <p class="text-gray-500 text-sm font-medium">Enter password to access</p>
         </div>
         
-        <!-- Password Form -->
         <form onsubmit="event.preventDefault(); authenticateAdmin();" class="space-y-6">
             <div class="relative">
                 <label for="adminPassword" class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Password</label>
                 <div class="relative">
                     <input 
-                        type="password" 
+                        type="password"
                         id="adminPassword" 
                         class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all duration-300 bg-gray-50 focus:bg-white font-medium placeholder-gray-400"
                         placeholder="Enter admin password"
@@ -85,9 +89,6 @@
                 </span>
             </button>
         </form>
-        
-        <!-- Footer -->
-       
     </div>
 </div>
 
@@ -513,13 +514,39 @@
                                             $photoUrl = $order->photos[0];
                                             $isCloudinary = str_starts_with($photoUrl, 'http://') || str_starts_with($photoUrl, 'https://');
                                             $displayUrl = $isCloudinary ? $photoUrl : Storage::url($photoUrl);
+                                            $fileName = 'order-' . $order->id . '-photo-1.jpg';
                                         @endphp
+                                        
+                                        <!-- View Image -->
                                         <a href="{{ $displayUrl }}" target="_blank" class="inline-flex items-center justify-center gap-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-sm font-medium px-3 py-1.5 rounded-md transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
                                             View Image
                                         </a>
+                                        
+                                        <!-- Download -->
+                                        <a href="{{ $displayUrl }}" download="{{ $fileName }}" class="inline-flex items-center justify-center gap-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 text-sm font-medium px-3 py-1.5 rounded-md transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                            </svg>
+                                            Download
+                                        </a>
+                                        
+                                        @if(count($order->photos) > 1)
+                                            <!-- Download All -->
+                                            <button 
+                                                class="download-all-btn inline-flex items-center justify-center gap-1.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50 text-sm font-medium px-3 py-1.5 rounded-md transition-colors"
+                                                data-order-id="{{ $order->id }}"
+                                                data-photos="{{ json_encode($order->photos) }}"
+                                                data-is-cloudinary="{{ $isCloudinary ? '1' : '0' }}"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                                                </svg>
+                                                All ({{ count($order->photos) }})
+                                            </button>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -549,4 +576,30 @@
     </div>
 </div>
 </div>
+
+<script>
+// Download all photos for an order
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtns = document.querySelectorAll('.download-all-btn');
+    
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            const photos = JSON.parse(this.dataset.photos);
+            const isCloudinary = this.dataset.isCloudinary === '1';
+            
+            photos.forEach((photo, index) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = isCloudinary ? photo : '/storage/' + photo;
+                    a.download = 'order-' + orderId + '-photo-' + (index + 1) + '.jpg';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, index * 500);
+            });
+        });
+    });
+});
+</script>
 @endsection
