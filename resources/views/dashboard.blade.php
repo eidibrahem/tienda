@@ -5,7 +5,7 @@
     // Check if admin is authenticated
     function checkAdminAuth() {
         const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
-        if (!isAuthenticated) {
+        if (!isAuthenticated ) {
             showPasswordModal();
         } else {
             showDashboard();
