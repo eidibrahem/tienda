@@ -41,7 +41,8 @@ class OrderController extends Controller {
             'status'      => 'pending'
         ]);
 
-        return redirect()->route('orders.pay', $order);
+        // Redirect to home page after creating order
+        return redirect()->route('home')->with('success', 'Your order has been submitted successfully!');
     }
 
     // لوحة بسيطةs
