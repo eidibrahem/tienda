@@ -526,12 +526,16 @@
                                         </a>
                                         
                                         <!-- Download -->
-                                        <a href="{{ $displayUrl }}" download="{{ $fileName }}" class="inline-flex items-center justify-center gap-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 text-sm font-medium px-3 py-1.5 rounded-md transition-colors">
+                                        <button 
+                                            class="download-single-btn inline-flex items-center justify-center gap-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 text-sm font-medium px-3 py-1.5 rounded-md transition-colors"
+                                            data-url="{{ $displayUrl }}"
+                                            data-filename="{{ $fileName }}"
+                                        >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                             </svg>
                                             Download
-                                        </a>
+                                        </button>
                                         
                                         @if(count($order->photos) > 1)
                                             <!-- Download All -->
@@ -578,11 +582,43 @@
 </div>
 
 <script>
-// Download all photos for an order
+// Function to download image from URL
+async function downloadImage(url, filename) {
+    try {
+        // Show loading indicator
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Clean up the blob URL
+        window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+        console.error('Error downloading image:', error);
+        alert('Error downloading image. Please try again.');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const downloadBtns = document.querySelectorAll('.download-all-btn');
+    // Download single photo
+    const singleDownloadBtns = document.querySelectorAll('.download-single-btn');
+    singleDownloadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const filename = this.dataset.filename;
+            downloadImage(url, filename);
+        });
+    });
     
-    downloadBtns.forEach(btn => {
+    // Download all photos for an order
+    const downloadAllBtns = document.querySelectorAll('.download-all-btn');
+    downloadAllBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const orderId = this.dataset.orderId;
             const photos = JSON.parse(this.dataset.photos);
@@ -590,12 +626,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             photos.forEach((photo, index) => {
                 setTimeout(() => {
-                    const a = document.createElement('a');
-                    a.href = isCloudinary ? photo : '/storage/' + photo;
-                    a.download = 'order-' + orderId + '-photo-' + (index + 1) + '.jpg';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    const url = isCloudinary ? photo : '/storage/' + photo;
+                    const filename = 'order-' + orderId + '-photo-' + (index + 1) + '.jpg';
+                    downloadImage(url, filename);
                 }, index * 500);
             });
         });
