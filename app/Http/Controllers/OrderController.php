@@ -176,10 +176,11 @@ class OrderController extends Controller {
         // Send email if status changed to delivered
         if ($newStatus === 'delivered' && $oldStatus !== 'delivered') {
             try {
-                Mail::to($order->email)->send(new OrderDeliveredMail($order));
-                Log::info("📧 Delivery email sent to: {$order->email} for Order ID: {$order->id}");
+                // Queue the email to avoid blocking the request
+                Mail::to($order->email)->queue(new OrderDeliveredMail($order));
+                Log::info("📧 Delivery email queued for: {$order->email} for Order ID: {$order->id}");
             } catch (\Exception $e) {
-                Log::error("❌ Failed to send delivery email to: {$order->email}. Error: " . $e->getMessage());
+                Log::error("❌ Failed to queue delivery email to: {$order->email}. Error: " . $e->getMessage());
                 // Don't fail the status update if email fails
             }
         }
