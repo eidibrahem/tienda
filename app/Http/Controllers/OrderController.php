@@ -8,7 +8,9 @@ use App\Models\Template;
 use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Services\CloudinaryService;
+use App\Mail\OrderDeliveredMail;
 
 class OrderController extends Controller {
     public function create(Template $template) {
@@ -166,7 +168,21 @@ class OrderController extends Controller {
             'status' => 'required|in:pending,processing,completed,delivered'
         ]);
 
-        $order->update(['status' => $request->status]);
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        $order->update(['status' => $newStatus]);
+
+        // Send email if status changed to delivered
+        if ($newStatus === 'delivered' && $oldStatus !== 'delivered') {
+            try {
+                Mail::to($order->email)->send(new OrderDeliveredMail($order));
+                Log::info("📧 Delivery email sent to: {$order->email} for Order ID: {$order->id}");
+            } catch (\Exception $e) {
+                Log::error("❌ Failed to send delivery email to: {$order->email}. Error: " . $e->getMessage());
+                // Don't fail the status update if email fails
+            }
+        }
 
         // Redirect back with status_updated parameter to bypass password check
         return redirect()->to(route('dashboard') . '?status_updated=true')->with('success', 'Order status updated successfully!');
