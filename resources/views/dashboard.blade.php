@@ -352,6 +352,69 @@
     .order-card p {
         color: var(--text-light);
     }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem 0;
+        }
+        
+        .stats-card {
+            min-width: calc(50% - 0.5rem);
+        }
+        
+        .order-card > div {
+            flex-direction: column !important;
+        }
+        
+        .order-card .flex.items-center.gap-4.flex-shrink-0 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            width: 100% !important;
+        }
+        
+        .order-card .text-right {
+            text-align: left !important;
+            width: 100%;
+        }
+        
+        .order-card form {
+            width: 100%;
+        }
+        
+        .order-card select {
+            width: 100%;
+        }
+        
+        .order-card .flex.flex-col.gap-2 {
+            flex-direction: row !important;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        
+        .order-card .flex.flex-col.gap-2 > * {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .order-card h4 {
+            font-size: 1rem;
+        }
+        
+        .order-card .font-bold.text-xl {
+            font-size: 1.125rem;
+        }
+        
+        .order-card p {
+            word-break: break-word;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .stats-card {
+            min-width: 100%;
+        }
+    }
 </style>
 <div class="dashboard-container">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
